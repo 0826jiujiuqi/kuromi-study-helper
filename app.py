@@ -27,12 +27,12 @@ from database import (
 from planner import Planner
 from trainer import train_model
 import threading
-from config import DB_URL, DB_TOKEN
+from config import CF_ACCOUNT_ID, CF_API_TOKEN, CF_D1_DB_ID
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = f"libsql://{DB_URL}?auth_token={DB_TOKEN}"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"d1://{CF_ACCOUNT_ID}:{CF_API_TOKEN}@{CF_D1_DB_ID}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -212,7 +212,7 @@ def import_document():
         if not events:
             return jsonify({'status': 'error', 'message': '未解析到有效记录'}), 400
         add_events_bulk(events)
-        return jsonify({'status': 'success', 'message': f'成功导入 {len(events)} 条记录'})
+        return jsonify({'status': 'success', 'message': f'成功导入 {len(events)}'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
     finally:
@@ -235,7 +235,7 @@ def import_knowledge():
         if request.form.get('replace', 'false') == 'true':
             delete_all_knowledge_points()
         add_knowledge_points_bulk(kps)
-        return jsonify({'status': 'success', 'message': f'成功导入 {len(kps)} 个知识点'})
+        return jsonify({'status': 'success', 'message': f'成功导入 {len(kps)}'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
     finally:
@@ -274,7 +274,7 @@ STANDARD_TASKS = {
     "数学二": [
         {"task_name": "高数强化课程", "total_amount": 40, "unit": "讲", "unit_size": 2, "unit_hours": 0.75, "subject": "数学"},
         {"task_name": "660题高数部分", "total_amount": 400, "unit": "道", "unit_size": 20, "unit_hours": 0.05, "subject": "数学"},
-        {"task_name": "线代强化课程", "total_amount": 20, "unit": "讲", "unit_size": 2, "unit_hours": 0.75, "subject": "数学"},
+        {"task_name": "线代强化课程", "total_amount": 20, "unit": "讲", "unit_hours": 0.75, "subject": "数学"},
         {"task_name": "880题线代部分", "total_amount": 200, "unit": "道", "unit_size": 20, "unit_hours": 0.06, "subject": "数学"}
     ],
     "政治": [
