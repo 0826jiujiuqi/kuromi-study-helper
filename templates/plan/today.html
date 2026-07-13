@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>今日考研规划｜库洛米学习助手</title>
+    <style>
+        * { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+            background: linear-gradient(145deg, #f7e9f0 0%, #e8d5e0 50%, #dcc0cd 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 200, 220, 0.3), transparent 60%),
+                        radial-gradient(circle at 70% 80%, rgba(200, 150, 200, 0.25), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+        .kuromi-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #3d1f2e;
+            text-shadow: 0 4px 0 #d9a5b3, 0 6px 12px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .kuromi-title::after { content: "🖤🎀"; font-size: 1.8rem; margin-left: 10px; }
+        .kuromi-title::before { content: "💀"; font-size: 1.8rem; margin-right: 10px; }
+        .card-kuromi {
+            background: rgba(255, 248, 250, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 30px 30px 30px 8px;
+            border: 2px solid #a86b7e;
+            box-shadow: 0 8px 0 #7a4b5c, 0 12px 24px rgba(90, 40, 60, 0.2);
+            padding: 18px 16px;
+            margin-bottom: 18px;
+            transition: all 0.1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-kuromi::after {
+            content: "💀";
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            font-size: 1.2rem;
+            opacity: 0.15;
+            transform: rotate(10deg);
+            pointer-events: none;
+        }
+        .card-kuromi:hover { transform: translateY(-2px); box-shadow: 0 10px 0 #7a4b5c, 0 16px 32px rgba(90, 40, 60, 0.25); }
+        .card-title-kuromi {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4a2736;
+            border-bottom: 2px dashed #c98da3;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title-kuromi span { font-size: 1.5rem; }
+        .form-control-kuromi {
+            background: #fff8fa;
+            border: 2px solid #d9b3c2;
+            border-radius: 20px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: #2d1a22;
+            transition: 0.2s;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        .form-control-kuromi:focus {
+            border-color: #a85772;
+            box-shadow: 0 0 0 4px rgba(168, 87, 114, 0.25);
+            outline: none;
+            background: #fff;
+        }
+        .btn-kuromi {
+            background: linear-gradient(145deg, #f7b6cb, #e489a6);
+            border: 2px solid #a85772;
+            border-radius: 40px;
+            color: #2d1a22;
+            font-weight: 700;
+            padding: 10px 18px;
+            box-shadow: 0 5px 0 #7a4b5c;
+            transition: all 0.08s linear;
+            width: 100%;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-kuromi:active { transform: translateY(4px); box-shadow: 0 1px 0 #7a4b5c; }
+        .btn-kuromi-outline {
+            background: transparent;
+            border: 2px solid #a85772;
+            border-radius: 40px;
+            color: #4a2736;
+            font-weight: 700;
+            padding: 6px 14px;
+            box-shadow: 0 3px 0 #7a4b5c;
+            transition: 0.08s linear;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-kuromi-outline:active { transform: translateY(3px); box-shadow: 0 0px 0 #7a4b5c; }
+        .info-card {
+            background: #fff5f7;
+            border-radius: 20px;
+            padding: 15px;
+            border: 2px solid #d9b3c2;
+            margin-bottom: 12px;
+        }
+        .info-text {
+            color: #88596b;
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+        .task-item {
+            background: #fffafc;
+            border-left: 6px solid #d68aa3;
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(128, 70, 90, 0.08);
+        }
+        .task-subject {
+            font-weight: 700;
+            color: #7a4b5c;
+            font-size: 1rem;
+        }
+        .task-content {
+            margin: 6px 0;
+            color: #2d1a22;
+            font-size: 0.95rem;
+        }
+        .task-standard {
+            font-size: 0.85rem;
+            color: #a86b7e;
+        }
+        .d-flex { display: flex; gap: 12px; }
+        .flex-fill { flex: 1; }
+        .mb-4 { margin-bottom: 20px; }
+
+        @media (max-width: 576px) {
+            .kuromi-title { font-size: 1.6rem; }
+            .kuromi-title::before, .kuromi-title::after { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="kuromi-title">今日个性化考研任务</div>
+
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>📊</span> 今日学习状态（联动主页数据）</div>
+            <div class="info-card">
+                <p class="info-text">📈 当前备考阶段：<span id="phase_text">加载中...</span></p>
+                <p class="info-text">✅ 近3天学习完成率：<span id="finish_rate">加载中...</span></p>
+                <p class="info-text">🎯 今日任务适配策略：<span id="plan_strategy">加载中...</span></p>
+                <p class="info-text">⚠️ 重点补强方向：<span id="weak_tip">加载中...</span></p>
+            </div>
+        </div>
+
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>📝</span> 今日动态任务清单（自动校准）</div>
+            <div id="daily_task_list">
+                <p class="info-text" style="text-align:center;padding:20px;">正在联动你的学习记录，生成专属任务...</p>
+            </div>
+        </div>
+
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>✅</span> 今日学习反馈提交</div>
+            <p class="info-text">提交今日学习完成情况、薄弱点，系统自动校准明日任务总量与难度，形成学习闭环</p>
+            <textarea class="form-control-kuromi w-100" rows="3" id="daily_feedback" placeholder="记录今日完成进度、未完成任务、薄弱知识点、学习状态..."></textarea>
+            <button class="btn-kuromi mt-3" id="submit_feedback">提交反馈并更新规划</button>
+        </div>
+
+        <div class="d-flex gap-2 mb-4">
+            <a href="/plan/config" class="btn-kuromi-outline flex-fill">重新配置规划</a>
+            <a href="/" class="btn-kuromi-outline flex-fill">返回学习首页</a>
+        </div>
+    </div>
+
+    <script>
+        function loadDailyPlan() {
+            fetch("/plan/api/get_daily_plan")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("phase_text").innerText = data.phase || "未配置备考规划";
+                document.getElementById("finish_rate").innerText = data.finish_rate || "暂无学习数据";
+                document.getElementById("plan_strategy").innerText = data.strategy || "等待配置后自动生成";
+                document.getElementById("weak_tip").innerText = data.weak_tip || "无重点补强方向";
+
+                const taskBox = document.getElementById("daily_task_list");
+                if(data.task_list && data.task_list.length > 0){
+                    let taskHtml = "";
+                    data.task_list.forEach(item => {
+                        taskHtml += `
+                        <div class="task-item">
+                            <div class="task-subject">${item.subject}</div>
+                            <div class="task-content">${item.content}</div>
+                            <div class="task-standard">🎯 验收标准：${item.standard}</div>
+                        </div>
+                        `;
+                    });
+                    taskBox.innerHTML = taskHtml;
+                }else{
+                    taskBox.innerHTML = `<p class="info-text" style="text-align:center;padding:20px;">请先完成考研规划配置，生成专属每日任务！</p>`;
+                }
+            }).catch(() => {
+                document.getElementById("daily_task_list").innerHTML = `<p class="info-text" style="text-align:center;padding:20px;">数据加载异常，请重试！</p>`;
+            });
+        }
+
+        document.getElementById("submit_feedback").addEventListener("click", function(){
+            const feedback = document.getElementById("daily_feedback").value.trim();
+            if(!feedback){
+                alert("请填写今日学习反馈！");
+                return;
+            }
+            fetch("/plan/api/submit_feedback", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({feedback: feedback})
+            }).then(res => res.json()).then(ret => {
+                if(ret.success){
+                    alert("🎉 反馈提交成功！明日任务已自动动态校准，学习节奏持续优化！");
+                    document.getElementById("daily_feedback").value = "";
+                    loadDailyPlan();
+                }else{
+                    alert(ret.msg || "提交失败，请重试！");
+                }
+            });
+        });
+
+        loadDailyPlan();
+    </script>
+</body>
+</html>

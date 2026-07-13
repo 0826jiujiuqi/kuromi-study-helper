@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>🖤 库洛米学习助手</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.font.im/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Zen Maru Gothic', 'Comic Sans MS', 'Chalkboard SE', sans-serif; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+            background: linear-gradient(145deg, #f7e9f0 0%, #e8d5e0 50%, #dcc0cd 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 200, 220, 0.3), transparent 60%),
+                        radial-gradient(circle at 70% 80%, rgba(200, 150, 200, 0.25), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        #deco-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .deco-item {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.25;
+            user-select: none;
+            animation-duration: 8s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+        .deco-item.float1 { animation-name: float1; }
+        .deco-item.float2 { animation-name: float2; }
+        .deco-item.float3 { animation-name: float3; }
+        .deco-item.spin { animation-name: spin; animation-duration: 12s; animation-timing-function: linear; }
+        .deco-item.twinkle { animation-name: twinkle; animation-duration: 4s; }
+        @keyframes float1 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-30px) rotate(5deg); } }
+        @keyframes float2 { 0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); } 50% { transform: translateY(20px) rotate(-8deg) scale(1.1); } }
+        @keyframes float3 { 0%, 100% { transform: translateX(0px) rotate(0deg); } 50% { transform: translateX(25px) rotate(10deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 0.6; transform: scale(1.2); } }
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+        .kuromi-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #3d1f2e;
+            text-shadow: 0 4px 0 #d9a5b3, 0 6px 12px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .kuromi-title::after { content: "🖤🎀"; font-size: 1.8rem; margin-left: 10px; }
+        .kuromi-title::before { content: "💀"; font-size: 1.8rem; margin-right: 10px; }
+        .card-kuromi {
+            background: rgba(255, 248, 250, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 30px 30px 30px 8px;
+            border: 2px solid #a86b7e;
+            box-shadow: 0 8px 0 #7a4b5c, 0 12px 24px rgba(90, 40, 60, 0.2);
+            padding: 18px 16px;
+            margin-bottom: 18px;
+            transition: all 0.1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-kuromi::after {
+            content: "💀";
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            font-size: 1.2rem;
+            opacity: 0.15;
+            transform: rotate(10deg);
+            pointer-events: none;
+        }
+        .card-kuromi:hover { transform: translateY(-2px); box-shadow: 0 10px 0 #7a4b5c, 0 16px 32px rgba(90, 40, 60, 0.25); }
+        .card-title-kuromi {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4a2736;
+            border-bottom: 2px dashed #c98da3;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title-kuromi span { font-size: 1.5rem; }
+        .form-control-kuromi {
+            background: #fff8fa;
+            border: 2px solid #d9b3c2;
+            border-radius: 20px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: #2d1a22;
+            transition: 0.2s;
+        }
+        .form-control-kuromi:focus {
+            border-color: #a85772;
+            box-shadow: 0 0 0 4px rgba(168, 87, 114, 0.25);
+            outline: none;
+            background: #fff;
+        }
+        .form-control-kuromi::placeholder { color: #b08898; font-weight: 300; }
+        .btn-kuromi {
+            background: linear-gradient(145deg, #f7b6cb, #e489a6);
+            border: 2px solid #a85772;
+            border-radius: 40px;
+            color: #2d1a22;
+            font-weight: 700;
+            padding: 10px 18px;
+            box-shadow: 0 5px 0 #7a4b5c;
+            transition: all 0.08s linear;
+            width: 100%;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+        .btn-kuromi:active { transform: translateY(4px); box-shadow: 0 1px 0 #7a4b5c; }
+        .btn-kuromi-outline {
+            background: transparent;
+            border: 2px solid #a85772;
+            border-radius: 40px;
+            color: #4a2736;
+            font-weight: 700;
+            padding: 6px 14px;
+            box-shadow: 0 3px 0 #7a4b5c;
+            transition: 0.08s linear;
+        }
+        .btn-kuromi-outline:active { transform: translateY(3px); box-shadow: 0 0px 0 #7a4b5c; }
+        .btn-kuromi-danger {
+            background: #e07a8a;
+            border-color: #a54a5a;
+            box-shadow: 0 5px 0 #753f4a;
+            color: #2d1a22;
+        }
+        .btn-kuromi-danger:active { transform: translateY(4px); box-shadow: 0 1px 0 #753f4a; }
+        #plan-content {
+            background: #fff5f7;
+            border-radius: 20px;
+            padding: 15px;
+            border: 2px solid #d9b3c2;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #2d1a22;
+            min-height: 180px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .task-item-kuromi {
+            background: #fffafc;
+            border-left: 6px solid #d68aa3;
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(128, 70, 90, 0.08);
+        }
+        .task-item-kuromi .task-info { font-size: 0.9rem; color: #2d1a22; }
+        .task-item-kuromi .task-status {
+            font-size: 0.75rem;
+            background: #eed5de;
+            padding: 2px 12px;
+            border-radius: 30px;
+        }
+        .feedback-kuromi {
+            color: #7a4b5c;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            background: #f0dfe6;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .divider-kuromi {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c98da3, transparent);
+            margin: 16px 0;
+        }
+        @media (max-width: 576px) {
+            .kuromi-title { font-size: 1.6rem; }
+            .kuromi-title::before, .kuromi-title::after { font-size: 1.2rem; }
+            .btn-kuromi { font-size: 0.9rem; padding: 8px 12px; }
+            .deco-item { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="deco-container"></div>
+    <div class="container">
+        <div class="kuromi-title">学习助手</div>
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>📋</span> 今日计划</div>
+            <div id="plan-content">加载计划中...</div>
+        </div>
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>📝</span> 记录学习</div>
+            <div class="row g-2">
+                <div class="col-6"><input id="subject" class="form-control form-control-kuromi" placeholder="学科"></div>
+                <div class="col-6"><input id="topic" class="form-control form-control-kuromi" placeholder="主题"></div>
+                <div class="col-4"><input id="activity" class="form-control form-control-kuromi" placeholder="活动"></div>
+                <div class="col-4"><input id="duration" class="form-control form-control-kuromi" type="number" placeholder="分钟"></div>
+                <div class="col-4"><input id="note" class="form-control form-control-kuromi" placeholder="备注"></div>
+                <div class="col-12"><button id="btn-submit-event" class="btn-kuromi">✨ 提交记录</button></div>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mb-3 justify-content-center">
+            <button id="btn-mark-complete" class="btn-kuromi-outline" style="flex:1;">✅ 今日完成</button>
+            <button id="btn-report" class="btn-kuromi-outline" style="flex:1;">📊 报告</button>
+            <button id="btn-history" class="btn-kuromi-outline" style="flex:1;">📜 历史</button>
+            <button id="btn-train" class="btn-kuromi-outline" style="flex:1;">🔄 训练</button>
+            <button id="btn-update-plan" class="btn-kuromi-outline" style="flex:1;">📅 更新</button>
+            <!-- 新增考研规划入口，和其他按钮样式统一 -->
+            <a href="/plan/config" style="flex:1; text-decoration: none;">
+                <button class="btn-kuromi-outline w-100">📚 考研规划</button>
+                <button class="btn-kuromi-outline w-100">📚 今日任务</button>
+         </a>
+        </div>
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>😴</span> 睡眠记录</div>
+            <div class="row g-2">
+                <div class="col-4"><input id="bed-time" class="form-control form-control-kuromi" placeholder="就寝 HH:MM" value="23:30"></div>
+                <div class="col-4"><input id="nap-start" class="form-control form-control-kuromi" placeholder="午休开始" value="12:30"></div>
+                <div class="col-4"><input id="nap-duration" class="form-control form-control-kuromi" placeholder="午休分钟" value="30"></div>
+                <div class="col-12"><button id="btn-sleep" class="btn-kuromi">💤 提交睡眠</button></div>
+                <div class="col-6 mt-2"><span class="feedback-kuromi" id="wake-recommend">⏰ 起床: --:--</span></div>
+                <div class="col-6 mt-2"><span class="feedback-kuromi" id="nap-recommend">🌙 午休起: --:--</span></div>
+            </div>
+        </div>
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>💬</span> 状态汇报</div>
+            <div class="input-group">
+                <input id="state-input" class="form-control form-control-kuromi" placeholder="输入状态 (如高效、走神...)">
+                <button id="btn-state" class="btn-kuromi" style="width:auto; padding:10px 24px;">提交</button>
+            </div>
+            <div id="state-feedback" class="mt-2 feedback-kuromi">等待状态反馈...</div>
+        </div>
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>📋</span> 任务管理</div>
+            <div class="row g-2">
+                <div class="col-3"><input id="task-subject" class="form-control form-control-kuromi" placeholder="学科"></div>
+                <div class="col-3"><input id="task-phase" class="form-control form-control-kuromi" placeholder="阶段"></div>
+                <div class="col-4"><input id="task-desc" class="form-control form-control-kuromi" placeholder="任务描述"></div>
+                <div class="col-2"><input id="task-date" class="form-control form-control-kuromi" type="date"></div>
+                <div class="col-12"><button id="btn-add-task" class="btn-kuromi">➕ 添加任务</button></div>
+            </div>
+            <hr class="divider-kuromi">
+            <div id="task-list"></div>
+        </div>
+
+        <!-- 新增：学习历史模块 -->
+        <div class="card-kuromi">
+            <div class="card-title-kuromi"><span>📜</span> 学习历史</div>
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <input id="history-date-filter" class="form-control form-control-kuromi" type="date">
+                </div>
+                <div class="col-6">
+                    <input id="history-subject-filter" class="form-control form-control-kuromi" placeholder="按学科筛选">
+                </div>
+            </div>
+            <div id="history-list" style="max-height: 360px; overflow-y: auto;">
+                <div class="feedback-kuromi">暂无学习记录</div>
+            </div>
+            <hr class="divider-kuromi">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span class="feedback-kuromi" id="history-summary">累计学习：0 分钟</span>
+                <button id="btn-filter-history" class="btn-kuromi-outline">筛选记录</button>
+            </div>
+        </div>
+
+        <button id="btn-clear" class="btn-kuromi btn-kuromi-danger w-100">⚠️ 清空所有数据</button>
+        <div style="text-align:center; margin-top:20px; color:#a86b7e; font-size:0.8rem;">🖤 库洛米陪你一起学习 💀</div>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        (function() {
+            const container = document.getElementById('deco-container');
+            const emojis = ['💀', '🎀', '⭐', '🌙', '❤️', '🌸', '🖤', '✨', '💗', '🍬'];
+            const animations = ['float1', 'float2', 'float3', 'spin', 'twinkle'];
+            const count = 30;
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'deco-item';
+                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = Math.random() * 90 + '%';
+                el.style.top = Math.random() * 90 + '%';
+                const size = 1.2 + Math.random() * 1.8;
+                el.style.fontSize = size + 'rem';
+                el.style.opacity = 0.15 + Math.random() * 0.25;
+                const anim = animations[Math.floor(Math.random() * animations.length)];
+                el.classList.add(anim);
+                el.style.animationDelay = (Math.random() * 10) + 's';
+                if (anim === 'spin') {
+                    el.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+                }
+                container.appendChild(el);
+            }
+            const mouseTrail = document.createElement('div');
+            mouseTrail.style.position = 'fixed';
+            mouseTrail.style.pointerEvents = 'none';
+            mouseTrail.style.fontSize = '1.8rem';
+            mouseTrail.style.opacity = '0.3';
+            mouseTrail.style.transition = 'transform 0.3s ease';
+            mouseTrail.style.zIndex = '9999';
+            mouseTrail.textContent = '💀';
+            document.body.appendChild(mouseTrail);
+            document.addEventListener('mousemove', (e) => {
+                mouseTrail.style.left = (e.clientX - 20) + 'px';
+                mouseTrail.style.top = (e.clientY - 20) + 'px';
+                mouseTrail.style.transform = 'rotate(' + (e.clientX / 10) + 'deg)';
+            });
+            if ('ontouchstart' in window) {
+                mouseTrail.style.display = 'none';
+            }
+        })();
+    </script>
+</body>
+</html>
