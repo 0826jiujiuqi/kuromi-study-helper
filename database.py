@@ -4,10 +4,14 @@ import csv
 from datetime import datetime, date, timedelta
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from libsql_sqlalchemy import create_engine
-from config import DB_URL, DB_TOKEN
+from d1_sqlalchemy import create_d1_engine
+from config import CF_ACCOUNT_ID, CF_API_TOKEN, CF_D1_DB_ID
 
-engine = create_engine(f"libsql://{DB_URL}?auth_token={DB_TOKEN}", connect_args={"check_same_thread": False})
+engine = create_d1_engine(
+    account_id=CF_ACCOUNT_ID,
+    api_token=CF_API_TOKEN,
+    database_id=CF_D1_DB_ID
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = declarative_base()
@@ -233,7 +237,7 @@ def delete_event(event_id):
     event = session.query(StudyEvent).filter_by(id=event_id).first()
     if event:
         session.delete(event)
-        session.commit()
+    session.commit()
     session.close()
     from trainer import train_model
     train_model()
@@ -342,7 +346,7 @@ def delete_task(task_id):
     task = session.query(Task).filter_by(id=task_id).first()
     if task:
         session.delete(task)
-        session.commit()
+    session.commit()
     session.close()
 
 def add_knowledge_point(subject, title, status='未学', priority=0, importance=0.0, source=''):
