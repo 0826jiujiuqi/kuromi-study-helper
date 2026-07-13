@@ -2,16 +2,12 @@ import os
 import re
 import csv
 from datetime import datetime, date, timedelta
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from d1_sqlalchemy import create_d1_engine
-from config import CF_ACCOUNT_ID, CF_API_TOKEN, CF_D1_DB_ID
+from config import DB_PATH
 
-engine = create_d1_engine(
-    account_id=CF_ACCOUNT_ID,
-    api_token=CF_API_TOKEN,
-    database_id=CF_D1_DB_ID
-)
+engine = create_engine(f'sqlite:///{DB_PATH}', connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = declarative_base()
@@ -41,7 +37,6 @@ def add_event(subject, topic, activity, duration, note=''):
     session.commit()
     session.close()
     from trainer import train_model
-    train_model()
 
 def get_events(days=90):
     from models import StudyEvent
@@ -63,7 +58,7 @@ def get_nodes(subject=None):
     session = Session()
     q = session.query(KnowledgeNode)
     if subject:
-        q = q.filter_by(subject=subject)
+        q = q.filter_by(subject)
     res = q.all()
     session.close()
     return res
@@ -215,7 +210,6 @@ def add_events_bulk(events_list):
     session.commit()
     session.close()
     from trainer import train_model
-    train_model()
 
 def clear_all_data():
     from models import StudyEvent, KnowledgeNode, UserGoal, DailyPlan, SleepRecord, StateEvent, Task, KnowledgePoint
@@ -240,7 +234,6 @@ def delete_event(event_id):
     session.commit()
     session.close()
     from trainer import train_model
-    train_model()
 
 def parse_document(filepath):
     events = []
@@ -318,11 +311,11 @@ def get_tasks(subject=None, phase=None, status=None):
     session = Session()
     q = session.query(Task)
     if subject:
-        q = q.filter_by(subject=subject)
+        q = q.filter_by(subject)
     if phase:
-        q = q.filter_by(phase=phase)
+        q = q.filter_by(phase)
     if status:
-        q = q.filter_by(status=status)
+        q = q.filter_by(status)
     res = q.all()
     session.close()
     return res
@@ -371,9 +364,9 @@ def get_knowledge_points(subject=None, status=None):
     session = Session()
     q = session.query(KnowledgePoint)
     if subject:
-        q = q.filter_by(subject=subject)
+        q = q.filter_by(subject)
     if status:
-        q = q.filter_by(status=status)
+        q = q.filter_by(status)
     res = q.all()
     session.close()
     return res
@@ -384,7 +377,7 @@ def update_knowledge_point_status(title, new_status):
     kp = session.query(KnowledgePoint).filter_by(title=title).first()
     if kp:
         kp.status = new_status
-        session.commit()
+    session.commit()
     session.close()
 
 def get_all_study_records():
@@ -504,7 +497,6 @@ def parse_knowledge_document(filepath):
                         text += page.extract_text() + "\n"
             elif ext == '.pptx':
                 from pptx import Presentation
-                prs = Presentation(filepath)
                 for slide in prs.slides:
                     for shape in slide.shapes:
                         if hasattr(shape, "text"):
@@ -512,7 +504,7 @@ def parse_knowledge_document(filepath):
         else:
             return []
     except Exception as e:
-        raise Exception(f"解析文档失败：{e}")
+        raise Exception(f"解析文件失败：{e}")
     kps = []
     lines = text.splitlines()
     for line in lines:
