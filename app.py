@@ -27,11 +27,12 @@ from database import (
 from planner import Planner
 from trainer import train_model
 import threading
+from config import DB_URL, DB_TOKEN
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join("/app/data" if os.path.exists("/app/data") else os.path.dirname(__file__), "study.db")}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f"libsql://{DB_URL}?auth_token={DB_TOKEN}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
