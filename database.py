@@ -2,12 +2,12 @@ import os
 import re
 import csv
 from datetime import datetime, date, timedelta
-from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from config import DB_PATH
+from libsql_sqlalchemy import create_engine
+from config import DB_URL, DB_TOKEN
 
-engine = create_engine(f'sqlite:///{DB_PATH}', connect_args={'check_same_thread': False})
+engine = create_engine(f"libsql://{DB_URL}?auth_token={DB_TOKEN}", connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = declarative_base()
