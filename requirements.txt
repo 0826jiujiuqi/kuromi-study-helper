@@ -9,3 +9,4 @@ scikit-learn==1.3.2
 python-docx==1.1.0
 PyPDF2==3.0.1
 python-pptx==0.6.23
+libsql-sqlalchemy==0.1.10
